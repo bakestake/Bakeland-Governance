@@ -15,11 +15,11 @@ contract veBuds is Initializable, ERC20Upgradeable, ERC20PermitUpgradeable, ERC2
         _disableInitializers();
     }
 
-    function initialize(address initialOwner) initializer public {
+    function initialize() initializer public {
         __ERC20_init("Bakeland governance token", "veBUDS");
         __ERC20Permit_init("MyToken");
         __ERC20Votes_init();
-        __Ownable_init(initialOwner);
+        __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
     }
 

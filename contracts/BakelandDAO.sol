@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-// Compatible with OpenZeppelin Contracts ^5.0.0
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/governance/GovernorUpgradeable.sol";
@@ -19,16 +18,16 @@ contract BakelandDAO is Initializable, GovernorUpgradeable, GovernorSettingsUpgr
         _disableInitializers();
     }
 
-    function initialize(IVotes _token, TimelockControllerUpgradeable _timelock, address initialOwner)
+    function initialize(address _token, address _timelock)
         initializer public
     {
         __Governor_init("Bakeland");
         __GovernorSettings_init(1 days, 1 weeks, 0);
         __GovernorCountingSimple_init();
-        __GovernorVotes_init(_token);
+        __GovernorVotes_init(IVotes(_token));
         __GovernorVotesQuorumFraction_init(10);
-        __GovernorTimelockControl_init(_timelock);
-        __Ownable_init(initialOwner);
+        __GovernorTimelockControl_init(TimelockControllerUpgradeable(payable(_timelock)));
+        __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
     }
 
