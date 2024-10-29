@@ -202,9 +202,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Checkpoints__factory>;
     getContractFactory(
-      name: "BakelandDAO",
+      name: "BakelandDAOHub",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.BakelandDAO__factory>;
+    ): Promise<Contracts.BakelandDAOHub__factory>;
+    getContractFactory(
+      name: "BakelandDAOHub",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BakelandDAOHub__factory>;
     getContractFactory(
       name: "Timelock",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -213,6 +217,38 @@ declare module "hardhat/types/runtime" {
       name: "VeBuds",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.VeBuds__factory>;
+    getContractFactory(
+      name: "QueryResponse",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.QueryResponse__factory>;
+    getContractFactory(
+      name: "IWormhole",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IWormhole__factory>;
+    getContractFactory(
+      name: "IWormholeReceiver",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IWormholeReceiver__factory>;
+    getContractFactory(
+      name: "IWormholeRelayer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IWormholeRelayer__factory>;
+    getContractFactory(
+      name: "IWormholeRelayerBase",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IWormholeRelayerBase__factory>;
+    getContractFactory(
+      name: "IWormholeRelayerDelivery",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IWormholeRelayerDelivery__factory>;
+    getContractFactory(
+      name: "IWormholeRelayerSend",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IWormholeRelayerSend__factory>;
+    getContractFactory(
+      name: "BytesParsing",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BytesParsing__factory>;
 
     getContractAt(
       name: "AccessControlUpgradeable",
@@ -450,10 +486,15 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Checkpoints>;
     getContractAt(
-      name: "BakelandDAO",
+      name: "BakelandDAOHub",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.BakelandDAO>;
+    ): Promise<Contracts.BakelandDAOHub>;
+    getContractAt(
+      name: "BakelandDAOHub",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BakelandDAOHub>;
     getContractAt(
       name: "Timelock",
       address: string | ethers.Addressable,
@@ -464,6 +505,46 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.VeBuds>;
+    getContractAt(
+      name: "QueryResponse",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.QueryResponse>;
+    getContractAt(
+      name: "IWormhole",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IWormhole>;
+    getContractAt(
+      name: "IWormholeReceiver",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IWormholeReceiver>;
+    getContractAt(
+      name: "IWormholeRelayer",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IWormholeRelayer>;
+    getContractAt(
+      name: "IWormholeRelayerBase",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IWormholeRelayerBase>;
+    getContractAt(
+      name: "IWormholeRelayerDelivery",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IWormholeRelayerDelivery>;
+    getContractAt(
+      name: "IWormholeRelayerSend",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IWormholeRelayerSend>;
+    getContractAt(
+      name: "BytesParsing",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BytesParsing>;
 
     deployContract(
       name: "AccessControlUpgradeable",
@@ -654,9 +735,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Checkpoints>;
     deployContract(
-      name: "BakelandDAO",
+      name: "BakelandDAOHub",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.BakelandDAO>;
+    ): Promise<Contracts.BakelandDAOHub>;
+    deployContract(
+      name: "BakelandDAOHub",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BakelandDAOHub>;
     deployContract(
       name: "Timelock",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -665,6 +750,38 @@ declare module "hardhat/types/runtime" {
       name: "VeBuds",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.VeBuds>;
+    deployContract(
+      name: "QueryResponse",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.QueryResponse>;
+    deployContract(
+      name: "IWormhole",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IWormhole>;
+    deployContract(
+      name: "IWormholeReceiver",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IWormholeReceiver>;
+    deployContract(
+      name: "IWormholeRelayer",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IWormholeRelayer>;
+    deployContract(
+      name: "IWormholeRelayerBase",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IWormholeRelayerBase>;
+    deployContract(
+      name: "IWormholeRelayerDelivery",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IWormholeRelayerDelivery>;
+    deployContract(
+      name: "IWormholeRelayerSend",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IWormholeRelayerSend>;
+    deployContract(
+      name: "BytesParsing",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BytesParsing>;
 
     deployContract(
       name: "AccessControlUpgradeable",
@@ -902,10 +1019,15 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Checkpoints>;
     deployContract(
-      name: "BakelandDAO",
+      name: "BakelandDAOHub",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.BakelandDAO>;
+    ): Promise<Contracts.BakelandDAOHub>;
+    deployContract(
+      name: "BakelandDAOHub",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BakelandDAOHub>;
     deployContract(
       name: "Timelock",
       args: any[],
@@ -916,6 +1038,46 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.VeBuds>;
+    deployContract(
+      name: "QueryResponse",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.QueryResponse>;
+    deployContract(
+      name: "IWormhole",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IWormhole>;
+    deployContract(
+      name: "IWormholeReceiver",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IWormholeReceiver>;
+    deployContract(
+      name: "IWormholeRelayer",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IWormholeRelayer>;
+    deployContract(
+      name: "IWormholeRelayerBase",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IWormholeRelayerBase>;
+    deployContract(
+      name: "IWormholeRelayerDelivery",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IWormholeRelayerDelivery>;
+    deployContract(
+      name: "IWormholeRelayerSend",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IWormholeRelayerSend>;
+    deployContract(
+      name: "BytesParsing",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BytesParsing>;
 
     // default types
     getContractFactory(
