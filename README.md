@@ -47,7 +47,6 @@ Bakeland Multi-DAO utilizes Wormhole technology to enable decentralized, cross-c
 #### Hub & spoke model
   <p align="center" width="100%">
     <img src="https://github.com/user-attachments/assets/61de16f7-ae53-455e-a5f5-7b31d93f5087" width=600 height=400 align=center>
-    <a align=center>Hub & spoke model</a>
   </p>
 
 #### Proposal creation on hub
