@@ -1,8 +1,11 @@
 import { task } from 'hardhat/config'
 import { getProviderURLs } from '../../utils/getProviderUrl'
 
+/// deployes timelock with proposers, executers and admin role alloted to one address
 task('deploy-timelock', 'Deploys timelock Smart contract')
     .addParam('chain', 'network to deploy')
+    .addPositionalParam('mindelay')
+    .addPositionalParam('admin')
     .setAction(async (taskArgs, hre) => {
         await hre.run('compile')
 
@@ -15,7 +18,7 @@ task('deploy-timelock', 'Deploys timelock Smart contract')
 
         const contract = await hre.upgrades.deployProxy(
             factory,
-            ["86400", ["0x5EF0d89a9E859CFcA0C52C9A17CFF93f1A6A19C1"], ["0x5EF0d89a9E859CFcA0C52C9A17CFF93f1A6A19C1"], "0x5EF0d89a9E859CFcA0C52C9A17CFF93f1A6A19C1"],
+            [taskArgs.mindelay, [taskArgs.admin], [taskArgs.admin], taskArgs.admin],
             {
                 initializer: 'initialize_timelock',
                 pollingInterval: taskArgs.chain == "beraTestnet" ? 10 : 500,

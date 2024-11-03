@@ -3,8 +3,11 @@ import { getProviderURLs } from '../../utils/getProviderUrl'
 
 // 0xE3e4354978c4dbA6a743c0a20e4D940Fde830f3A - deployed address
 
-task('deploy-dao', 'Deploys DAO Smart contract')
+task('deploy-hub-dao', 'Deploys DAO Smart contract')
     .addParam('chain', 'network to deploy')
+    .addPositionalParam('token')
+    .addPositionalParam('timelock')
+    .addPositionalParam('relayer')
     .setAction(async (taskArgs, hre) => {
         await hre.run('compile')
 
@@ -17,7 +20,7 @@ task('deploy-dao', 'Deploys DAO Smart contract')
 
         const contract = await hre.upgrades.deployProxy(
             factory,
-            ["0x3e248B8781B89234eb025611D36ff584D20cAa14","0x24BD0713c32676b8438CAC6CCcB2686931E12Cd8"], //insert token and timelock addre
+            [taskArgs.token, taskArgs.timelock, taskArgs.relayer,[]], //insert array of wormhole chain Ids for spoke chains
             {
                 initializer: 'initialize',
                 pollingInterval: taskArgs.chain == "beraTestnet" ? 10 : 500,
