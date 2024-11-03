@@ -102,7 +102,7 @@ Bakeland Multi-DAO utilizes Wormhole technology to enable decentralized, cross-c
 
 ## Code snippets
 
-1. Publishing proposal to all spoke chains
+### Publishing proposal to all spoke chains
    ```
    function createProposal(
         address[] memory targets,
@@ -146,7 +146,7 @@ Bakeland Multi-DAO utilizes Wormhole technology to enable decentralized, cross-c
         return proposalId;
     }
    ```
-2. Receiving and creating a proposal on spoke
+### Receiving and creating a proposal on spoke
    ```
    function receiveWormholeMessages(
         bytes memory payload,
@@ -184,7 +184,7 @@ Bakeland Multi-DAO utilizes Wormhole technology to enable decentralized, cross-c
     }
 
    ```
-3. Voting status query validation function
+### Voting status query validation function
    ```
    function fetchVotingStatus(bytes memory response, IWormhole.Signature[] memory signatures) internal view returns(bool){
         bool votedAlready = false;
@@ -228,7 +228,7 @@ Bakeland Multi-DAO utilizes Wormhole technology to enable decentralized, cross-c
 
     }
    ```
-4. Vote count aggregation through query
+### Vote count aggregation through query
    ```
    function fetchVotesFromSpokes(bytes memory response, IWormhole.Signature[] memory signatures, uint256 proposalId) internal  {
         uint256 againstCount;
