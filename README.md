@@ -44,16 +44,16 @@ Bakeland Multi-DAO utilizes Wormhole technology to enable decentralized, cross-c
 ---
 
 ### Architecture
-Hub & spoke model
+- Hub & spoke model
 ![image](https://github.com/user-attachments/assets/61de16f7-ae53-455e-a5f5-7b31d93f5087)
 
-Proposal creation on hub
+- Proposal creation on hub
 ![image](https://github.com/user-attachments/assets/3516c364-a65e-4894-81ac-5a44c203bf06)
 
-Casting vote on spoke chain
+- Casting vote on spoke chain
 ![image](https://github.com/user-attachments/assets/65a0b60a-2738-4a90-9e1a-faa5108f5304)
 
-Proposal execution on hub chain
+- Proposal execution on hub chain
 ![image](https://github.com/user-attachments/assets/f657c8bf-8c20-427f-922e-cf9bd608f180)
 
 
