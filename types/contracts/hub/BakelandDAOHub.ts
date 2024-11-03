@@ -21,28 +21,198 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../common";
+} from "../../common";
 
-export interface BakelandDAOInterface extends Interface {
+export declare namespace IWormhole {
+  export type SignatureStruct = {
+    r: BytesLike;
+    s: BytesLike;
+    v: BigNumberish;
+    guardianIndex: BigNumberish;
+  };
+
+  export type SignatureStructOutput = [
+    r: string,
+    s: string,
+    v: bigint,
+    guardianIndex: bigint
+  ] & { r: string; s: string; v: bigint; guardianIndex: bigint };
+}
+
+export declare namespace QueryResponse {
+  export type ParsedPerChainQueryResponseStruct = {
+    chainId: BigNumberish;
+    queryType: BigNumberish;
+    request: BytesLike;
+    response: BytesLike;
+  };
+
+  export type ParsedPerChainQueryResponseStructOutput = [
+    chainId: bigint,
+    queryType: bigint,
+    request: string,
+    response: string
+  ] & { chainId: bigint; queryType: bigint; request: string; response: string };
+
+  export type ParsedQueryResponseStruct = {
+    version: BigNumberish;
+    senderChainId: BigNumberish;
+    nonce: BigNumberish;
+    requestId: BytesLike;
+    responses: QueryResponse.ParsedPerChainQueryResponseStruct[];
+  };
+
+  export type ParsedQueryResponseStructOutput = [
+    version: bigint,
+    senderChainId: bigint,
+    nonce: bigint,
+    requestId: string,
+    responses: QueryResponse.ParsedPerChainQueryResponseStructOutput[]
+  ] & {
+    version: bigint;
+    senderChainId: bigint;
+    nonce: bigint;
+    requestId: string;
+    responses: QueryResponse.ParsedPerChainQueryResponseStructOutput[];
+  };
+
+  export type EthCallDataStruct = {
+    contractAddress: AddressLike;
+    callData: BytesLike;
+    result: BytesLike;
+  };
+
+  export type EthCallDataStructOutput = [
+    contractAddress: string,
+    callData: string,
+    result: string
+  ] & { contractAddress: string; callData: string; result: string };
+
+  export type EthCallByTimestampQueryResponseStruct = {
+    requestTargetBlockIdHint: BytesLike;
+    requestFollowingBlockIdHint: BytesLike;
+    requestTargetTimestamp: BigNumberish;
+    targetBlockNum: BigNumberish;
+    targetBlockTime: BigNumberish;
+    followingBlockNum: BigNumberish;
+    targetBlockHash: BytesLike;
+    followingBlockHash: BytesLike;
+    followingBlockTime: BigNumberish;
+    result: QueryResponse.EthCallDataStruct[];
+  };
+
+  export type EthCallByTimestampQueryResponseStructOutput = [
+    requestTargetBlockIdHint: string,
+    requestFollowingBlockIdHint: string,
+    requestTargetTimestamp: bigint,
+    targetBlockNum: bigint,
+    targetBlockTime: bigint,
+    followingBlockNum: bigint,
+    targetBlockHash: string,
+    followingBlockHash: string,
+    followingBlockTime: bigint,
+    result: QueryResponse.EthCallDataStructOutput[]
+  ] & {
+    requestTargetBlockIdHint: string;
+    requestFollowingBlockIdHint: string;
+    requestTargetTimestamp: bigint;
+    targetBlockNum: bigint;
+    targetBlockTime: bigint;
+    followingBlockNum: bigint;
+    targetBlockHash: string;
+    followingBlockHash: string;
+    followingBlockTime: bigint;
+    result: QueryResponse.EthCallDataStructOutput[];
+  };
+
+  export type EthCallQueryResponseStruct = {
+    requestBlockId: BytesLike;
+    blockNum: BigNumberish;
+    blockTime: BigNumberish;
+    blockHash: BytesLike;
+    result: QueryResponse.EthCallDataStruct[];
+  };
+
+  export type EthCallQueryResponseStructOutput = [
+    requestBlockId: string,
+    blockNum: bigint,
+    blockTime: bigint,
+    blockHash: string,
+    result: QueryResponse.EthCallDataStructOutput[]
+  ] & {
+    requestBlockId: string;
+    blockNum: bigint;
+    blockTime: bigint;
+    blockHash: string;
+    result: QueryResponse.EthCallDataStructOutput[];
+  };
+
+  export type EthCallWithFinalityQueryResponseStruct = {
+    requestBlockId: BytesLike;
+    requestFinality: BytesLike;
+    blockNum: BigNumberish;
+    blockTime: BigNumberish;
+    blockHash: BytesLike;
+    result: QueryResponse.EthCallDataStruct[];
+  };
+
+  export type EthCallWithFinalityQueryResponseStructOutput = [
+    requestBlockId: string,
+    requestFinality: string,
+    blockNum: bigint,
+    blockTime: bigint,
+    blockHash: string,
+    result: QueryResponse.EthCallDataStructOutput[]
+  ] & {
+    requestBlockId: string;
+    requestFinality: string;
+    blockNum: bigint;
+    blockTime: bigint;
+    blockHash: string;
+    result: QueryResponse.EthCallDataStructOutput[];
+  };
+}
+
+export interface BakelandDAOHubInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "BALLOT_TYPEHASH"
       | "CLOCK_MODE"
       | "COUNTING_MODE"
       | "EXTENDED_BALLOT_TYPEHASH"
+      | "QT_ETH_CALL"
+      | "QT_ETH_CALL_BY_TIMESTAMP"
+      | "QT_ETH_CALL_WITH_FINALITY"
+      | "QT_MAX"
+      | "QT_SOL_ACCOUNT"
+      | "QT_SOL_PDA"
       | "UPGRADE_INTERFACE_VERSION"
+      | "VERSION"
+      | "__Query_INIT_"
+      | "_wormhole"
+      | "addNewPeers"
       | "cancel"
-      | "castVote"
-      | "castVoteBySig"
-      | "castVoteWithReason"
-      | "castVoteWithReasonAndParams"
-      | "castVoteWithReasonAndParamsBySig"
+      | "castVote(uint256,uint8)"
+      | "castVote(uint256,uint8,bytes,(bytes32,bytes32,uint8,uint8)[])"
+      | "castVoteBySig(uint256,uint8,address,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])"
+      | "castVoteBySig(uint256,uint8,address,bytes)"
+      | "castVoteWithReason(uint256,uint8,string)"
+      | "castVoteWithReason(uint256,uint8,string,bytes,(bytes32,bytes32,uint8,uint8)[])"
+      | "castVoteWithReasonAndParams(uint256,uint8,string,bytes)"
+      | "castVoteWithReasonAndParams(uint256,uint8,string,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])"
+      | "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])"
+      | "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes)"
       | "clock"
+      | "createProposal"
       | "eip712Domain"
-      | "execute"
+      | "execute(address[],uint256[],bytes[],bytes32)"
+      | "execute(address[],uint256[],bytes[],bytes32,bytes,(bytes32,bytes32,uint8,uint8)[])"
+      | "getResponseDigest"
+      | "getResponseHash"
       | "getVotes"
       | "getVotesWithParams"
       | "hasVoted"
+      | "hasVotedSelector"
       | "hashProposal"
       | "initialize"
       | "name"
@@ -51,6 +221,10 @@ export interface BakelandDAOInterface extends Interface {
       | "onERC1155Received"
       | "onERC721Received"
       | "owner"
+      | "parseAndVerifyQueryResponse"
+      | "parseEthCallByTimestampQueryResponse"
+      | "parseEthCallQueryResponse"
+      | "parseEthCallWithFinalityQueryResponse"
       | "proposalDeadline"
       | "proposalEta"
       | "proposalNeedsQueuing"
@@ -58,6 +232,7 @@ export interface BakelandDAOInterface extends Interface {
       | "proposalSnapshot"
       | "proposalThreshold"
       | "proposalVotes"
+      | "proposalVotesSelector"
       | "propose"
       | "proxiableUUID"
       | "queue"
@@ -65,22 +240,33 @@ export interface BakelandDAOInterface extends Interface {
       | "quorumDenominator"
       | "quorumNumerator(uint256)"
       | "quorumNumerator()"
+      | "quoteCrossChainCost"
       | "relay"
       | "renounceOwnership"
+      | "responsePrefix"
       | "setProposalThreshold"
       | "setVotingDelay"
       | "setVotingPeriod"
+      | "spokePeerIds"
       | "state"
       | "supportsInterface"
       | "timelock"
       | "token"
       | "transferOwnership"
+      | "updatePeerAddresses"
       | "updateQuorumNumerator"
       | "updateTimelock"
       | "upgradeToAndCall"
+      | "validateBlockNum"
+      | "validateBlockTime"
+      | "validateChainId"
+      | "validateEthCallData"
+      | "validateMultipleEthCallData"
+      | "verifyQueryResponseSignatures"
       | "version"
       | "votingDelay"
       | "votingPeriod"
+      | "wormhole"
   ): FunctionFragment;
 
   getEvent(
@@ -119,31 +305,111 @@ export interface BakelandDAOInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "QT_ETH_CALL",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "QT_ETH_CALL_BY_TIMESTAMP",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "QT_ETH_CALL_WITH_FINALITY",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "QT_MAX", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "QT_SOL_ACCOUNT",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "QT_SOL_PDA",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "UPGRADE_INTERFACE_VERSION",
     values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "VERSION", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "__Query_INIT_",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(functionFragment: "_wormhole", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "addNewPeers",
+    values: [BigNumberish[], AddressLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "cancel",
     values: [AddressLike[], BigNumberish[], BytesLike[], BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "castVote",
+    functionFragment: "castVote(uint256,uint8)",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "castVoteBySig",
+    functionFragment: "castVote(uint256,uint8,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    values: [BigNumberish, BigNumberish, BytesLike, IWormhole.SignatureStruct[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "castVoteBySig(uint256,uint8,address,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    values: [
+      BigNumberish,
+      BigNumberish,
+      AddressLike,
+      BytesLike,
+      BytesLike,
+      IWormhole.SignatureStruct[]
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "castVoteBySig(uint256,uint8,address,bytes)",
     values: [BigNumberish, BigNumberish, AddressLike, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "castVoteWithReason",
+    functionFragment: "castVoteWithReason(uint256,uint8,string)",
     values: [BigNumberish, BigNumberish, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "castVoteWithReasonAndParams",
+    functionFragment: "castVoteWithReason(uint256,uint8,string,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    values: [
+      BigNumberish,
+      BigNumberish,
+      string,
+      BytesLike,
+      IWormhole.SignatureStruct[]
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "castVoteWithReasonAndParams(uint256,uint8,string,bytes)",
     values: [BigNumberish, BigNumberish, string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "castVoteWithReasonAndParamsBySig",
+    functionFragment: "castVoteWithReasonAndParams(uint256,uint8,string,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    values: [
+      BigNumberish,
+      BigNumberish,
+      string,
+      BytesLike,
+      BytesLike,
+      IWormhole.SignatureStruct[]
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    values: [
+      BigNumberish,
+      BigNumberish,
+      AddressLike,
+      string,
+      BytesLike,
+      BytesLike,
+      BytesLike,
+      IWormhole.SignatureStruct[]
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes)",
     values: [
       BigNumberish,
       BigNumberish,
@@ -155,12 +421,35 @@ export interface BakelandDAOInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "clock", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "createProposal",
+    values: [AddressLike[], BigNumberish[], BytesLike[], string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "eip712Domain",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "execute",
+    functionFragment: "execute(address[],uint256[],bytes[],bytes32)",
     values: [AddressLike[], BigNumberish[], BytesLike[], BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "execute(address[],uint256[],bytes[],bytes32,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    values: [
+      AddressLike[],
+      BigNumberish[],
+      BytesLike[],
+      BytesLike,
+      BytesLike,
+      IWormhole.SignatureStruct[]
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getResponseDigest",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getResponseHash",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getVotes",
@@ -175,12 +464,16 @@ export interface BakelandDAOInterface extends Interface {
     values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "hasVotedSelector",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "hashProposal",
     values: [AddressLike[], BigNumberish[], BytesLike[], BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [AddressLike, AddressLike]
+    values: [AddressLike, AddressLike, AddressLike, BigNumberish[]]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "nonces", values: [AddressLike]): string;
@@ -203,6 +496,22 @@ export interface BakelandDAOInterface extends Interface {
     values: [AddressLike, AddressLike, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "parseAndVerifyQueryResponse",
+    values: [BytesLike, IWormhole.SignatureStruct[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "parseEthCallByTimestampQueryResponse",
+    values: [QueryResponse.ParsedPerChainQueryResponseStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "parseEthCallQueryResponse",
+    values: [QueryResponse.ParsedPerChainQueryResponseStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "parseEthCallWithFinalityQueryResponse",
+    values: [QueryResponse.ParsedPerChainQueryResponseStruct]
+  ): string;
   encodeFunctionData(
     functionFragment: "proposalDeadline",
     values: [BigNumberish]
@@ -230,6 +539,10 @@ export interface BakelandDAOInterface extends Interface {
   encodeFunctionData(
     functionFragment: "proposalVotes",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "proposalVotesSelector",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "propose",
@@ -260,11 +573,19 @@ export interface BakelandDAOInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "quoteCrossChainCost",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "relay",
     values: [AddressLike, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "responsePrefix",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -279,6 +600,10 @@ export interface BakelandDAOInterface extends Interface {
     functionFragment: "setVotingPeriod",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "spokePeerIds",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "state", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -289,6 +614,10 @@ export interface BakelandDAOInterface extends Interface {
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updatePeerAddresses",
+    values: [BigNumberish[], AddressLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "updateQuorumNumerator",
@@ -302,6 +631,30 @@ export interface BakelandDAOInterface extends Interface {
     functionFragment: "upgradeToAndCall",
     values: [AddressLike, BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "validateBlockNum",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "validateBlockTime",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "validateChainId",
+    values: [BigNumberish, BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "validateEthCallData",
+    values: [QueryResponse.EthCallDataStruct, AddressLike[], BytesLike[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "validateMultipleEthCallData",
+    values: [QueryResponse.EthCallDataStruct[], AddressLike[], BytesLike[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "verifyQueryResponseSignatures",
+    values: [BytesLike, IWormhole.SignatureStruct[]]
+  ): string;
   encodeFunctionData(functionFragment: "version", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "votingDelay",
@@ -311,6 +664,7 @@ export interface BakelandDAOInterface extends Interface {
     functionFragment: "votingPeriod",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "wormhole", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "BALLOT_TYPEHASH",
@@ -326,39 +680,113 @@ export interface BakelandDAOInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "QT_ETH_CALL",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "QT_ETH_CALL_BY_TIMESTAMP",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "QT_ETH_CALL_WITH_FINALITY",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "QT_MAX", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "QT_SOL_ACCOUNT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "QT_SOL_PDA", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "UPGRADE_INTERFACE_VERSION",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "VERSION", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "__Query_INIT_",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_wormhole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "addNewPeers",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "cancel", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "castVote", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "castVoteBySig",
+    functionFragment: "castVote(uint256,uint8)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "castVoteWithReason",
+    functionFragment: "castVote(uint256,uint8,bytes,(bytes32,bytes32,uint8,uint8)[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "castVoteWithReasonAndParams",
+    functionFragment: "castVoteBySig(uint256,uint8,address,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "castVoteWithReasonAndParamsBySig",
+    functionFragment: "castVoteBySig(uint256,uint8,address,bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "castVoteWithReason(uint256,uint8,string)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "castVoteWithReason(uint256,uint8,string,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "castVoteWithReasonAndParams(uint256,uint8,string,bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "castVoteWithReasonAndParams(uint256,uint8,string,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "clock", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "createProposal",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "eip712Domain",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "execute(address[],uint256[],bytes[],bytes32)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "execute(address[],uint256[],bytes[],bytes32,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getResponseDigest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getResponseHash",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getVotes", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getVotesWithParams",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "hasVoted", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "hasVotedSelector",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "hashProposal",
     data: BytesLike
@@ -379,6 +807,22 @@ export interface BakelandDAOInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "parseAndVerifyQueryResponse",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "parseEthCallByTimestampQueryResponse",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "parseEthCallQueryResponse",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "parseEthCallWithFinalityQueryResponse",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "proposalDeadline",
     data: BytesLike
@@ -407,6 +851,10 @@ export interface BakelandDAOInterface extends Interface {
     functionFragment: "proposalVotes",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "proposalVotesSelector",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "propose", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "proxiableUUID",
@@ -426,9 +874,17 @@ export interface BakelandDAOInterface extends Interface {
     functionFragment: "quorumNumerator()",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "quoteCrossChainCost",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "relay", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "responsePrefix",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -443,6 +899,10 @@ export interface BakelandDAOInterface extends Interface {
     functionFragment: "setVotingPeriod",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "spokePeerIds",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "state", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
@@ -452,6 +912,10 @@ export interface BakelandDAOInterface extends Interface {
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePeerAddresses",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -466,6 +930,30 @@ export interface BakelandDAOInterface extends Interface {
     functionFragment: "upgradeToAndCall",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "validateBlockNum",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "validateBlockTime",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "validateChainId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "validateEthCallData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "validateMultipleEthCallData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "verifyQueryResponseSignatures",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "version", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "votingDelay",
@@ -475,6 +963,7 @@ export interface BakelandDAOInterface extends Interface {
     functionFragment: "votingPeriod",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "wormhole", data: BytesLike): Result;
 }
 
 export namespace EIP712DomainChangedEvent {
@@ -743,11 +1232,11 @@ export namespace VotingPeriodSetEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface BakelandDAO extends BaseContract {
-  connect(runner?: ContractRunner | null): BakelandDAO;
+export interface BakelandDAOHub extends BaseContract {
+  connect(runner?: ContractRunner | null): BakelandDAOHub;
   waitForDeployment(): Promise<this>;
 
-  interface: BakelandDAOInterface;
+  interface: BakelandDAOHubInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -794,7 +1283,35 @@ export interface BakelandDAO extends BaseContract {
 
   EXTENDED_BALLOT_TYPEHASH: TypedContractMethod<[], [string], "view">;
 
+  QT_ETH_CALL: TypedContractMethod<[], [bigint], "view">;
+
+  QT_ETH_CALL_BY_TIMESTAMP: TypedContractMethod<[], [bigint], "view">;
+
+  QT_ETH_CALL_WITH_FINALITY: TypedContractMethod<[], [bigint], "view">;
+
+  QT_MAX: TypedContractMethod<[], [bigint], "view">;
+
+  QT_SOL_ACCOUNT: TypedContractMethod<[], [bigint], "view">;
+
+  QT_SOL_PDA: TypedContractMethod<[], [bigint], "view">;
+
   UPGRADE_INTERFACE_VERSION: TypedContractMethod<[], [string], "view">;
+
+  VERSION: TypedContractMethod<[], [bigint], "view">;
+
+  __Query_INIT_: TypedContractMethod<
+    [_wormhole: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  _wormhole: TypedContractMethod<[], [string], "view">;
+
+  addNewPeers: TypedContractMethod<
+    [chainIds: BigNumberish[], peerAddresses: AddressLike[]],
+    [void],
+    "nonpayable"
+  >;
 
   cancel: TypedContractMethod<
     [
@@ -807,13 +1324,37 @@ export interface BakelandDAO extends BaseContract {
     "nonpayable"
   >;
 
-  castVote: TypedContractMethod<
+  "castVote(uint256,uint8)": TypedContractMethod<
     [proposalId: BigNumberish, support: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
+  "castVote(uint256,uint8,bytes,(bytes32,bytes32,uint8,uint8)[])": TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
     [bigint],
     "nonpayable"
   >;
 
-  castVoteBySig: TypedContractMethod<
+  "castVoteBySig(uint256,uint8,address,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])": TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      voter: AddressLike,
+      signature: BytesLike,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+
+  "castVoteBySig(uint256,uint8,address,bytes)": TypedContractMethod<
     [
       proposalId: BigNumberish,
       support: BigNumberish,
@@ -821,16 +1362,28 @@ export interface BakelandDAO extends BaseContract {
       signature: BytesLike
     ],
     [bigint],
-    "nonpayable"
+    "view"
   >;
 
-  castVoteWithReason: TypedContractMethod<
+  "castVoteWithReason(uint256,uint8,string)": TypedContractMethod<
     [proposalId: BigNumberish, support: BigNumberish, reason: string],
+    [bigint],
+    "view"
+  >;
+
+  "castVoteWithReason(uint256,uint8,string,bytes,(bytes32,bytes32,uint8,uint8)[])": TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      reason: string,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
     [bigint],
     "nonpayable"
   >;
 
-  castVoteWithReasonAndParams: TypedContractMethod<
+  "castVoteWithReasonAndParams(uint256,uint8,string,bytes)": TypedContractMethod<
     [
       proposalId: BigNumberish,
       support: BigNumberish,
@@ -838,10 +1391,38 @@ export interface BakelandDAO extends BaseContract {
       params: BytesLike
     ],
     [bigint],
+    "view"
+  >;
+
+  "castVoteWithReasonAndParams(uint256,uint8,string,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])": TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      reason: string,
+      params: BytesLike,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
     "nonpayable"
   >;
 
-  castVoteWithReasonAndParamsBySig: TypedContractMethod<
+  "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])": TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      voter: AddressLike,
+      reason: string,
+      params: BytesLike,
+      signature: BytesLike,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+
+  "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes)": TypedContractMethod<
     [
       proposalId: BigNumberish,
       support: BigNumberish,
@@ -851,10 +1432,21 @@ export interface BakelandDAO extends BaseContract {
       signature: BytesLike
     ],
     [bigint],
-    "nonpayable"
+    "view"
   >;
 
   clock: TypedContractMethod<[], [bigint], "view">;
+
+  createProposal: TypedContractMethod<
+    [
+      targets: AddressLike[],
+      values: BigNumberish[],
+      calldatas: BytesLike[],
+      description: string
+    ],
+    [bigint],
+    "payable"
+  >;
 
   eip712Domain: TypedContractMethod<
     [],
@@ -872,7 +1464,7 @@ export interface BakelandDAO extends BaseContract {
     "view"
   >;
 
-  execute: TypedContractMethod<
+  "execute(address[],uint256[],bytes[],bytes32)": TypedContractMethod<
     [
       targets: AddressLike[],
       values: BigNumberish[],
@@ -882,6 +1474,27 @@ export interface BakelandDAO extends BaseContract {
     [bigint],
     "payable"
   >;
+
+  "execute(address[],uint256[],bytes[],bytes32,bytes,(bytes32,bytes32,uint8,uint8)[])": TypedContractMethod<
+    [
+      targets: AddressLike[],
+      values: BigNumberish[],
+      calldatas: BytesLike[],
+      descriptionHash: BytesLike,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "payable"
+  >;
+
+  getResponseDigest: TypedContractMethod<
+    [response: BytesLike],
+    [string],
+    "view"
+  >;
+
+  getResponseHash: TypedContractMethod<[response: BytesLike], [string], "view">;
 
   getVotes: TypedContractMethod<
     [account: AddressLike, timepoint: BigNumberish],
@@ -901,6 +1514,8 @@ export interface BakelandDAO extends BaseContract {
     "view"
   >;
 
+  hasVotedSelector: TypedContractMethod<[], [string], "view">;
+
   hashProposal: TypedContractMethod<
     [
       targets: AddressLike[],
@@ -913,7 +1528,12 @@ export interface BakelandDAO extends BaseContract {
   >;
 
   initialize: TypedContractMethod<
-    [_token: AddressLike, _timelock: AddressLike],
+    [
+      _token: AddressLike,
+      _timelock: AddressLike,
+      _wormholeRelayer: AddressLike,
+      chainIds: BigNumberish[]
+    ],
     [void],
     "nonpayable"
   >;
@@ -953,6 +1573,30 @@ export interface BakelandDAO extends BaseContract {
   >;
 
   owner: TypedContractMethod<[], [string], "view">;
+
+  parseAndVerifyQueryResponse: TypedContractMethod<
+    [response: BytesLike, signatures: IWormhole.SignatureStruct[]],
+    [QueryResponse.ParsedQueryResponseStructOutput],
+    "view"
+  >;
+
+  parseEthCallByTimestampQueryResponse: TypedContractMethod<
+    [pcr: QueryResponse.ParsedPerChainQueryResponseStruct],
+    [QueryResponse.EthCallByTimestampQueryResponseStructOutput],
+    "view"
+  >;
+
+  parseEthCallQueryResponse: TypedContractMethod<
+    [pcr: QueryResponse.ParsedPerChainQueryResponseStruct],
+    [QueryResponse.EthCallQueryResponseStructOutput],
+    "view"
+  >;
+
+  parseEthCallWithFinalityQueryResponse: TypedContractMethod<
+    [pcr: QueryResponse.ParsedPerChainQueryResponseStruct],
+    [QueryResponse.EthCallWithFinalityQueryResponseStructOutput],
+    "view"
+  >;
 
   proposalDeadline: TypedContractMethod<
     [proposalId: BigNumberish],
@@ -998,6 +1642,8 @@ export interface BakelandDAO extends BaseContract {
     "view"
   >;
 
+  proposalVotesSelector: TypedContractMethod<[], [string], "view">;
+
   propose: TypedContractMethod<
     [
       targets: AddressLike[],
@@ -1034,6 +1680,8 @@ export interface BakelandDAO extends BaseContract {
 
   "quorumNumerator()": TypedContractMethod<[], [bigint], "view">;
 
+  quoteCrossChainCost: TypedContractMethod<[], [bigint], "view">;
+
   relay: TypedContractMethod<
     [target: AddressLike, value: BigNumberish, data: BytesLike],
     [void],
@@ -1041,6 +1689,8 @@ export interface BakelandDAO extends BaseContract {
   >;
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
+
+  responsePrefix: TypedContractMethod<[], [string], "view">;
 
   setProposalThreshold: TypedContractMethod<
     [newProposalThreshold: BigNumberish],
@@ -1060,6 +1710,8 @@ export interface BakelandDAO extends BaseContract {
     "nonpayable"
   >;
 
+  spokePeerIds: TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
+
   state: TypedContractMethod<[proposalId: BigNumberish], [bigint], "view">;
 
   supportsInterface: TypedContractMethod<
@@ -1074,6 +1726,12 @@ export interface BakelandDAO extends BaseContract {
 
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  updatePeerAddresses: TypedContractMethod<
+    [chainIds: BigNumberish[], peerAddresses: AddressLike[]],
     [void],
     "nonpayable"
   >;
@@ -1096,11 +1754,57 @@ export interface BakelandDAO extends BaseContract {
     "payable"
   >;
 
+  validateBlockNum: TypedContractMethod<
+    [_blockNum: BigNumberish, _minBlockNum: BigNumberish],
+    [void],
+    "view"
+  >;
+
+  validateBlockTime: TypedContractMethod<
+    [_blockTime: BigNumberish, _minBlockTime: BigNumberish],
+    [void],
+    "view"
+  >;
+
+  validateChainId: TypedContractMethod<
+    [chainId: BigNumberish, _validChainIds: BigNumberish[]],
+    [void],
+    "view"
+  >;
+
+  validateEthCallData: TypedContractMethod<
+    [
+      r: QueryResponse.EthCallDataStruct,
+      _expectedContractAddresses: AddressLike[],
+      _expectedFunctionSignatures: BytesLike[]
+    ],
+    [void],
+    "view"
+  >;
+
+  validateMultipleEthCallData: TypedContractMethod<
+    [
+      r: QueryResponse.EthCallDataStruct[],
+      _expectedContractAddresses: AddressLike[],
+      _expectedFunctionSignatures: BytesLike[]
+    ],
+    [void],
+    "view"
+  >;
+
+  verifyQueryResponseSignatures: TypedContractMethod<
+    [response: BytesLike, signatures: IWormhole.SignatureStruct[]],
+    [void],
+    "view"
+  >;
+
   version: TypedContractMethod<[], [string], "view">;
 
   votingDelay: TypedContractMethod<[], [bigint], "view">;
 
   votingPeriod: TypedContractMethod<[], [bigint], "view">;
+
+  wormhole: TypedContractMethod<[], [string], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
@@ -1119,8 +1823,42 @@ export interface BakelandDAO extends BaseContract {
     nameOrSignature: "EXTENDED_BALLOT_TYPEHASH"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "QT_ETH_CALL"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "QT_ETH_CALL_BY_TIMESTAMP"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "QT_ETH_CALL_WITH_FINALITY"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "QT_MAX"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "QT_SOL_ACCOUNT"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "QT_SOL_PDA"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
     nameOrSignature: "UPGRADE_INTERFACE_VERSION"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "VERSION"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "__Query_INIT_"
+  ): TypedContractMethod<[_wormhole: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "_wormhole"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "addNewPeers"
+  ): TypedContractMethod<
+    [chainIds: BigNumberish[], peerAddresses: AddressLike[]],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "cancel"
   ): TypedContractMethod<
@@ -1134,14 +1872,40 @@ export interface BakelandDAO extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "castVote"
+    nameOrSignature: "castVote(uint256,uint8)"
   ): TypedContractMethod<
     [proposalId: BigNumberish, support: BigNumberish],
+    [bigint],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "castVote(uint256,uint8,bytes,(bytes32,bytes32,uint8,uint8)[])"
+  ): TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
     [bigint],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "castVoteBySig"
+    nameOrSignature: "castVoteBySig(uint256,uint8,address,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])"
+  ): TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      voter: AddressLike,
+      signature: BytesLike,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "castVoteBySig(uint256,uint8,address,bytes)"
   ): TypedContractMethod<
     [
       proposalId: BigNumberish,
@@ -1150,17 +1914,30 @@ export interface BakelandDAO extends BaseContract {
       signature: BytesLike
     ],
     [bigint],
-    "nonpayable"
+    "view"
   >;
   getFunction(
-    nameOrSignature: "castVoteWithReason"
+    nameOrSignature: "castVoteWithReason(uint256,uint8,string)"
   ): TypedContractMethod<
     [proposalId: BigNumberish, support: BigNumberish, reason: string],
+    [bigint],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "castVoteWithReason(uint256,uint8,string,bytes,(bytes32,bytes32,uint8,uint8)[])"
+  ): TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      reason: string,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
     [bigint],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "castVoteWithReasonAndParams"
+    nameOrSignature: "castVoteWithReasonAndParams(uint256,uint8,string,bytes)"
   ): TypedContractMethod<
     [
       proposalId: BigNumberish,
@@ -1169,10 +1946,40 @@ export interface BakelandDAO extends BaseContract {
       params: BytesLike
     ],
     [bigint],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "castVoteWithReasonAndParams(uint256,uint8,string,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])"
+  ): TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      reason: string,
+      params: BytesLike,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "castVoteWithReasonAndParamsBySig"
+    nameOrSignature: "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])"
+  ): TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      voter: AddressLike,
+      reason: string,
+      params: BytesLike,
+      signature: BytesLike,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes)"
   ): TypedContractMethod<
     [
       proposalId: BigNumberish,
@@ -1183,11 +1990,23 @@ export interface BakelandDAO extends BaseContract {
       signature: BytesLike
     ],
     [bigint],
-    "nonpayable"
+    "view"
   >;
   getFunction(
     nameOrSignature: "clock"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "createProposal"
+  ): TypedContractMethod<
+    [
+      targets: AddressLike[],
+      values: BigNumberish[],
+      calldatas: BytesLike[],
+      description: string
+    ],
+    [bigint],
+    "payable"
+  >;
   getFunction(
     nameOrSignature: "eip712Domain"
   ): TypedContractMethod<
@@ -1206,7 +2025,7 @@ export interface BakelandDAO extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "execute"
+    nameOrSignature: "execute(address[],uint256[],bytes[],bytes32)"
   ): TypedContractMethod<
     [
       targets: AddressLike[],
@@ -1217,6 +2036,26 @@ export interface BakelandDAO extends BaseContract {
     [bigint],
     "payable"
   >;
+  getFunction(
+    nameOrSignature: "execute(address[],uint256[],bytes[],bytes32,bytes,(bytes32,bytes32,uint8,uint8)[])"
+  ): TypedContractMethod<
+    [
+      targets: AddressLike[],
+      values: BigNumberish[],
+      calldatas: BytesLike[],
+      descriptionHash: BytesLike,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "getResponseDigest"
+  ): TypedContractMethod<[response: BytesLike], [string], "view">;
+  getFunction(
+    nameOrSignature: "getResponseHash"
+  ): TypedContractMethod<[response: BytesLike], [string], "view">;
   getFunction(
     nameOrSignature: "getVotes"
   ): TypedContractMethod<
@@ -1239,6 +2078,9 @@ export interface BakelandDAO extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "hasVotedSelector"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "hashProposal"
   ): TypedContractMethod<
     [
@@ -1253,7 +2095,12 @@ export interface BakelandDAO extends BaseContract {
   getFunction(
     nameOrSignature: "initialize"
   ): TypedContractMethod<
-    [_token: AddressLike, _timelock: AddressLike],
+    [
+      _token: AddressLike,
+      _timelock: AddressLike,
+      _wormholeRelayer: AddressLike,
+      chainIds: BigNumberish[]
+    ],
     [void],
     "nonpayable"
   >;
@@ -1300,6 +2147,34 @@ export interface BakelandDAO extends BaseContract {
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "parseAndVerifyQueryResponse"
+  ): TypedContractMethod<
+    [response: BytesLike, signatures: IWormhole.SignatureStruct[]],
+    [QueryResponse.ParsedQueryResponseStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "parseEthCallByTimestampQueryResponse"
+  ): TypedContractMethod<
+    [pcr: QueryResponse.ParsedPerChainQueryResponseStruct],
+    [QueryResponse.EthCallByTimestampQueryResponseStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "parseEthCallQueryResponse"
+  ): TypedContractMethod<
+    [pcr: QueryResponse.ParsedPerChainQueryResponseStruct],
+    [QueryResponse.EthCallQueryResponseStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "parseEthCallWithFinalityQueryResponse"
+  ): TypedContractMethod<
+    [pcr: QueryResponse.ParsedPerChainQueryResponseStruct],
+    [QueryResponse.EthCallWithFinalityQueryResponseStructOutput],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "proposalDeadline"
   ): TypedContractMethod<[proposalId: BigNumberish], [bigint], "view">;
   getFunction(
@@ -1330,6 +2205,9 @@ export interface BakelandDAO extends BaseContract {
     ],
     "view"
   >;
+  getFunction(
+    nameOrSignature: "proposalVotesSelector"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "propose"
   ): TypedContractMethod<
@@ -1370,6 +2248,9 @@ export interface BakelandDAO extends BaseContract {
     nameOrSignature: "quorumNumerator()"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
+    nameOrSignature: "quoteCrossChainCost"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
     nameOrSignature: "relay"
   ): TypedContractMethod<
     [target: AddressLike, value: BigNumberish, data: BytesLike],
@@ -1379,6 +2260,9 @@ export interface BakelandDAO extends BaseContract {
   getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "responsePrefix"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "setProposalThreshold"
   ): TypedContractMethod<
@@ -1392,6 +2276,9 @@ export interface BakelandDAO extends BaseContract {
   getFunction(
     nameOrSignature: "setVotingPeriod"
   ): TypedContractMethod<[newVotingPeriod: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "spokePeerIds"
+  ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
   getFunction(
     nameOrSignature: "state"
   ): TypedContractMethod<[proposalId: BigNumberish], [bigint], "view">;
@@ -1407,6 +2294,13 @@ export interface BakelandDAO extends BaseContract {
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "updatePeerAddresses"
+  ): TypedContractMethod<
+    [chainIds: BigNumberish[], peerAddresses: AddressLike[]],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "updateQuorumNumerator"
   ): TypedContractMethod<
@@ -1425,6 +2319,56 @@ export interface BakelandDAO extends BaseContract {
     "payable"
   >;
   getFunction(
+    nameOrSignature: "validateBlockNum"
+  ): TypedContractMethod<
+    [_blockNum: BigNumberish, _minBlockNum: BigNumberish],
+    [void],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "validateBlockTime"
+  ): TypedContractMethod<
+    [_blockTime: BigNumberish, _minBlockTime: BigNumberish],
+    [void],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "validateChainId"
+  ): TypedContractMethod<
+    [chainId: BigNumberish, _validChainIds: BigNumberish[]],
+    [void],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "validateEthCallData"
+  ): TypedContractMethod<
+    [
+      r: QueryResponse.EthCallDataStruct,
+      _expectedContractAddresses: AddressLike[],
+      _expectedFunctionSignatures: BytesLike[]
+    ],
+    [void],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "validateMultipleEthCallData"
+  ): TypedContractMethod<
+    [
+      r: QueryResponse.EthCallDataStruct[],
+      _expectedContractAddresses: AddressLike[],
+      _expectedFunctionSignatures: BytesLike[]
+    ],
+    [void],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "verifyQueryResponseSignatures"
+  ): TypedContractMethod<
+    [response: BytesLike, signatures: IWormhole.SignatureStruct[]],
+    [void],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "version"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -1433,6 +2377,9 @@ export interface BakelandDAO extends BaseContract {
   getFunction(
     nameOrSignature: "votingPeriod"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "wormhole"
+  ): TypedContractMethod<[], [string], "view">;
 
   getEvent(
     key: "EIP712DomainChanged"

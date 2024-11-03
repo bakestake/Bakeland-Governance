@@ -1,8 +1,6 @@
 import { task } from 'hardhat/config'
 import { getProviderURLs } from '../../utils/getProviderUrl'
 
-// 0xE3e4354978c4dbA6a743c0a20e4D940Fde830f3A - deployed address
-
 task('deploy-hub-dao', 'Deploys DAO Smart contract')
     .addParam('chain', 'network to deploy')
     .addPositionalParam('token')
