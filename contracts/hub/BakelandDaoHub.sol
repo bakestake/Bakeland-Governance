@@ -27,24 +27,32 @@ contract BakelandDAOHub is
     UUPSUpgradeable,
     QueryResponse
 {
-
     error UnexpectedResultMismatch(uint);
 
+    /// Wormhole relayer interface for cross chain messaging
     IWormholeRelayer public _wormhole;
 
+    /// Array of spoke chains peer ids
     uint16[] public spokePeerIds;
 
+    /// Function selectors for queries
     bytes4 public proposalVotesSelector;
     bytes4 public hasVotedSelector;
-
+    
+    /// Spoke chain ids to corresponding contract address mapping 
     mapping(uint16 id => address spokeAddress) spokeAddresseBychainId;
 
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
-    }
+    }   
 
+
+    /// @param _token Token address of veBuds[ERC20Votes]
+    /// @param _timelock Timelock contract address
+    /// @param _wormholeRelayer Relayer address 
+    /// @param chainIds spoke chain ids
     function initialize(
         address _token,
         address _timelock,
@@ -71,26 +79,42 @@ contract BakelandDAOHub is
         }
     }
 
+    /// This function is responsible for adding new spoke chains
+    /// @param chainIds Array of chain ids to add
+    /// @param peerAddresses Corresponding contract address to each chain id
     function addNewPeers(uint16[] memory chainIds, address[] memory peerAddresses) external onlyOwner{
+        require(chainIds.length == peerAddresses.length);
         for(uint i = 0; i < chainIds.length; i++){
             spokePeerIds.push(chainIds[i]);
             spokeAddresseBychainId[chainIds[i]] = peerAddresses[i];
         }
     }
 
+    /// This function is responsible for updating exisiting spoke chain contract address
+    /// @param chainIds Array of chain ids to add
+    /// @param peerAddresses Corresponding contract address to each chain id
     function updatePeerAddresses(uint16[] memory chainIds, address[] memory peerAddresses) external onlyOwner{
+        require(chainIds.length == peerAddresses.length);
         for(uint i = 0; i < chainIds.length; i++){
             spokeAddresseBychainId[chainIds[i]] = peerAddresses[i];
         }
     }
 
-    function propose(
+
+    /// Overloaded execute function
+    /// This function accepts following two parameters for aggregating votes from spoke chains and
+    /// updating vote count on hub before executing
+    function execute(
         address[] memory targets,
         uint256[] memory values,
         bytes[] memory calldatas,
-        string memory description
-    ) public override pure returns (uint256) {
-        revert();
+        bytes32 descriptionHash,
+        bytes memory response, 
+        IWormhole.Signature[] memory signatures
+    ) public payable returns (uint256){
+        uint256 proposalId = hashProposal(targets, values, calldatas, descriptionHash);
+        fetchVotesFromSpokes(response, signatures, proposalId);
+        return super.execute(targets, values, calldatas, descriptionHash);
     }
 
     function quoteCrossChainCost() public view returns (uint256 cost) {
@@ -105,6 +129,9 @@ contract BakelandDAOHub is
         }
     }
 
+    /// Create proposal function with publishing data to spoke chains, This function creates the proposal 
+    /// on hub chain first and publishes message to spoke chains to create a proposal with same data on 
+    /// spoke chains
     function createProposal(
         address[] memory targets,
         uint256[] memory values,
@@ -145,6 +172,217 @@ contract BakelandDAOHub is
         }
 
         return proposalId;
+    }
+
+    /// Overloaded castVote functions ///
+
+    /// These castVote function make call to the same internal function as original castVote functions
+    /// Only difference is we add a validation condition to check if a user has already voted on any of
+    /// spoke chains already.. If the user address has already casted vote on one of the spoke or the hub
+    /// itself then user can cannot cast vote again
+
+    function castVote(
+        uint256 proposalId, 
+        uint8 support,
+        bytes memory response, 
+        IWormhole.Signature[] memory signatures
+    ) public returns (uint256) {
+        require(!fetchVotingStatus(response, signatures));
+        address voter = _msgSender();
+        return _castVote(proposalId, voter, support, "");
+    }
+
+    /**
+     * @dev See {IGovernor-castVoteWithReason}.
+     */
+    function castVoteWithReason(
+        uint256 proposalId,
+        uint8 support,
+        string calldata reason,
+        bytes memory response, 
+        IWormhole.Signature[] memory signatures
+    ) public returns (uint256) {
+        require(!fetchVotingStatus(response, signatures));
+        address voter = _msgSender();
+        return _castVote(proposalId, voter, support, reason);
+    }
+
+    /**
+     * @dev See {IGovernor-castVoteWithReasonAndParams}.
+     */
+    function castVoteWithReasonAndParams(
+        uint256 proposalId,
+        uint8 support,
+        string calldata reason,
+        bytes memory params,
+        bytes memory response, 
+        IWormhole.Signature[] memory signatures
+    ) public returns (uint256) {
+        require(!fetchVotingStatus(response, signatures));
+        address voter = _msgSender();
+        return _castVote(proposalId, voter, support, reason, params);
+    }
+
+    /**
+     * @dev See {IGovernor-castVoteBySig}.
+     */
+    function castVoteBySig(
+        uint256 proposalId,
+        uint8 support,
+        address voter,
+        bytes memory signature,
+        bytes memory response, 
+        IWormhole.Signature[] memory signatures
+    ) public returns (uint256) {
+        require(!fetchVotingStatus(response, signatures));
+        bool valid = SignatureChecker.isValidSignatureNow(
+            voter,
+            _hashTypedDataV4(keccak256(abi.encode(BALLOT_TYPEHASH, proposalId, support, voter, _useNonce(voter)))),
+            signature
+        );
+
+        if (!valid) {
+            revert GovernorInvalidSignature(voter);
+        }
+
+        return _castVote(proposalId, voter, support, "");
+    }
+
+    /**
+     * @dev See {IGovernor-castVoteWithReasonAndParamsBySig}.
+     */
+    function castVoteWithReasonAndParamsBySig(
+        uint256 proposalId,
+        uint8 support,
+        address voter,
+        string calldata reason,
+        bytes memory params,
+        bytes memory signature,
+        bytes memory response, 
+        IWormhole.Signature[] memory signatures
+    ) public returns (uint256) {
+        require(!fetchVotingStatus(response, signatures));
+        bool valid = SignatureChecker.isValidSignatureNow(
+            voter,
+            _hashTypedDataV4(
+                keccak256(
+                    abi.encode(
+                        EXTENDED_BALLOT_TYPEHASH,
+                        proposalId,
+                        support,
+                        voter,
+                        _useNonce(voter),
+                        keccak256(bytes(reason)),
+                        keccak256(params)
+                    )
+                )
+            ),
+            signature
+        );
+
+        if (!valid) {
+            revert GovernorInvalidSignature(voter);
+        }
+
+        return _castVote(proposalId, voter, support, reason, params);
+    }
+
+
+    /// Function responsible to process the query response
+    /// it parse the response from query and updates vote state on hub
+    function fetchVotesFromSpokes(bytes memory response, IWormhole.Signature[] memory signatures, uint256 proposalId) internal  {
+        uint256 againstCount;
+        uint256 forCount;
+        uint256 abstainCount;
+
+        ParsedQueryResponse memory r = parseAndVerifyQueryResponse(response, signatures);
+        uint256 numResponses = r.responses.length;
+        if (numResponses != spokePeerIds.length) {
+            revert UnexpectedResultMismatch(1);
+        }
+
+        for (uint256 i = 0; i < numResponses;) {
+
+            EthCallQueryResponse memory eqr = parseEthCallQueryResponse(r.responses[i]);
+
+            // Validate that update is not stale
+            validateBlockTime(eqr.blockTime, block.timestamp - 300);
+
+            if (eqr.result.length != 1) {
+                revert UnexpectedResultMismatch(2);
+            }
+
+            // Validate addresses and function signatures
+            address[] memory validAddresses = new address[](1);
+            bytes4[] memory validFunctionSignatures = new bytes4[](1);
+            validAddresses[0] = address(this);
+            validFunctionSignatures[0] = proposalVotesSelector;
+
+            validateMultipleEthCallData(eqr.result, validAddresses, validFunctionSignatures);
+
+            if(eqr.result[0].result.length != 32){
+                revert UnexpectedResultMismatch(3);
+            }
+
+            (uint256 againstVotes, uint256 forVotes, uint256 abstainVotes) = abi.decode(eqr.result[0].result, (uint256, uint256, uint256));
+
+            againstCount += againstVotes;
+            forCount += forVotes;
+            abstainCount += abstainVotes;
+
+            unchecked {
+                ++i;
+            }
+        }
+
+        _countVote(proposalId, address(1), 0, againstCount,"");
+        _countVote(proposalId, address(2), 1, forCount,"");
+        _countVote(proposalId, address(3), 2, abstainCount,"");
+
+    }
+
+    /// This function is responsible for parsing the query response and validating if
+    /// user has casted vote on any other spoke akready
+    function fetchVotingStatus(bytes memory response, IWormhole.Signature[] memory signatures) internal view returns(bool){
+        bool votedAlready = false;
+        ParsedQueryResponse memory r = parseAndVerifyQueryResponse(response, signatures);
+        uint256 numResponses = r.responses.length;
+        if (numResponses != spokePeerIds.length) {
+            revert UnexpectedResultMismatch(1);
+        }
+
+        for (uint256 i = 0; i < numResponses;) {
+
+            EthCallQueryResponse memory eqr = parseEthCallQueryResponse(r.responses[i]);
+
+            // Validate that update is not stale
+            validateBlockTime(eqr.blockTime, block.timestamp - 300);
+
+            if (eqr.result.length != 1) {
+                revert UnexpectedResultMismatch(2);
+            }
+
+            // Validate addresses and function signatures
+            address[] memory validAddresses = new address[](1);
+            bytes4[] memory validFunctionSignatures = new bytes4[](1);
+            validAddresses[0] = address(this);
+            validFunctionSignatures[0] = hasVotedSelector;
+
+            validateMultipleEthCallData(eqr.result, validAddresses, validFunctionSignatures);
+
+            if(eqr.result[0].result.length != 32){
+                revert UnexpectedResultMismatch(3);
+            }
+
+            votedAlready = abi.decode(eqr.result[0].result, (bool)) == true? true : votedAlready;
+
+            unchecked {
+                ++i;
+            }
+        }
+
+        return votedAlready;
+
     }
 
     // The following functions are overrides required by Solidity.
@@ -271,97 +509,71 @@ contract BakelandDAOHub is
         return super._executor();
     }
 
-    function fetchVotesFromSpokes(bytes memory response, IWormhole.Signature[] memory signatures, uint256 proposalId) internal  {
-        uint256 againstCount;
-        uint256 forCount;
-        uint256 abstainCount;
-
-        ParsedQueryResponse memory r = parseAndVerifyQueryResponse(response, signatures);
-        uint256 numResponses = r.responses.length;
-        if (numResponses != spokePeerIds.length) {
-            revert UnexpectedResultMismatch(1);
-        }
-
-        for (uint256 i = 0; i < numResponses;) {
-
-            EthCallQueryResponse memory eqr = parseEthCallQueryResponse(r.responses[i]);
-
-            // Validate that update is not stale
-            validateBlockTime(eqr.blockTime, block.timestamp - 300);
-
-            if (eqr.result.length != 1) {
-                revert UnexpectedResultMismatch(2);
-            }
-
-            // Validate addresses and function signatures
-            address[] memory validAddresses = new address[](1);
-            bytes4[] memory validFunctionSignatures = new bytes4[](1);
-            validAddresses[0] = address(this);
-            validFunctionSignatures[0] = proposalVotesSelector;
-
-            validateMultipleEthCallData(eqr.result, validAddresses, validFunctionSignatures);
-
-            if(eqr.result[0].result.length != 32){
-                revert UnexpectedResultMismatch(3);
-            }
-
-            (uint256 againstVotes, uint256 forVotes, uint256 abstainVotes) = abi.decode(eqr.result[0].result, (uint256, uint256, uint256));
-
-            againstCount += againstVotes;
-            forCount += forVotes;
-            abstainCount += abstainVotes;
-
-            unchecked {
-                ++i;
-            }
-        }
-
-        _countVote(proposalId, address(1), 0, againstCount,"");
-        _countVote(proposalId, address(2), 1, forCount,"");
-        _countVote(proposalId, address(3), 2, abstainCount,"");
-
+    /// override execute function
+    /// Overriden to avoid being used without query validation
+    function execute(
+        address[] memory targets,
+        uint256[] memory values,
+        bytes[] memory calldatas,
+        bytes32 descriptionHash
+    ) public payable override returns (uint256){
+        revert();
     }
 
-    function fetchVotingStatus(bytes memory response, IWormhole.Signature[] memory signatures) internal view returns(bool){
-        bool votedAlready = false;
-        ParsedQueryResponse memory r = parseAndVerifyQueryResponse(response, signatures);
-        uint256 numResponses = r.responses.length;
-        if (numResponses != spokePeerIds.length) {
-            revert UnexpectedResultMismatch(1);
-        }
+    //-------------------------------------------------------------------------------------------------------//
+    /// Overriden original cast vote functions to avoid anyone from making use of the to caste vote
+    /// as these do not validate if the user has already voted on any other spoke chain or not.
 
-        for (uint256 i = 0; i < numResponses;) {
+    function castVote(uint256 proposalId, uint8 support) public pure override returns (uint256) {
+        revert();
+    }
+    /**
+     * @dev See {IGovernor-castVoteWithReason}.
+     */
+    function castVoteWithReason(
+        uint256 proposalId,
+        uint8 support,
+        string calldata reason
+    ) public pure override returns (uint256) {
+        revert();
+    }
 
-            EthCallQueryResponse memory eqr = parseEthCallQueryResponse(r.responses[i]);
+    /**
+     * @dev See {IGovernor-castVoteWithReasonAndParams}.
+     */
+    function castVoteWithReasonAndParams(
+        uint256 proposalId,
+        uint8 support,
+        string calldata reason,
+        bytes memory params
+    ) public pure override returns (uint256) {
+        revert();
+    }
 
-            // Validate that update is not stale
-            validateBlockTime(eqr.blockTime, block.timestamp - 300);
+    /**
+     * @dev See {IGovernor-castVoteBySig}.
+     */
+    function castVoteBySig(
+        uint256 proposalId,
+        uint8 support,
+        address voter,
+        bytes memory signature
+    ) public pure override returns (uint256) {
+        revert();
+    }
 
-            if (eqr.result.length != 1) {
-                revert UnexpectedResultMismatch(2);
-            }
-
-            // Validate addresses and function signatures
-            address[] memory validAddresses = new address[](1);
-            bytes4[] memory validFunctionSignatures = new bytes4[](1);
-            validAddresses[0] = address(this);
-            validFunctionSignatures[0] = hasVotedSelector;
-
-            validateMultipleEthCallData(eqr.result, validAddresses, validFunctionSignatures);
-
-            if(eqr.result[0].result.length != 32){
-                revert UnexpectedResultMismatch(3);
-            }
-
-            votedAlready = abi.decode(eqr.result[0].result, (bool)) == true? true : votedAlready;
-
-            unchecked {
-                ++i;
-            }
-        }
-
-        return votedAlready;
-
+    /**
+     * @dev See {IGovernor-castVoteWithReasonAndParamsBySig}.
+     */
+    function castVoteWithReasonAndParamsBySig(
+        uint256 proposalId,
+        uint8 support,
+        address voter,
+        string calldata reason,
+        bytes memory params,
+        bytes memory signature
+    ) public pure override returns (uint256) {
+        revert();
     }
 
 

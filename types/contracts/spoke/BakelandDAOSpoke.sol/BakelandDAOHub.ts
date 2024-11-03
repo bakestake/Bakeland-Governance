@@ -195,11 +195,16 @@ export interface BakelandDAOHubInterface extends Interface {
       | "_noOfChains"
       | "_wormhole"
       | "cancel"
-      | "castVote"
-      | "castVoteBySig"
-      | "castVoteWithReason"
-      | "castVoteWithReasonAndParams"
-      | "castVoteWithReasonAndParamsBySig"
+      | "castVote(uint256,uint8)"
+      | "castVote(uint256,uint8,bytes,(bytes32,bytes32,uint8,uint8)[])"
+      | "castVoteBySig(uint256,uint8,address,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])"
+      | "castVoteBySig(uint256,uint8,address,bytes)"
+      | "castVoteWithReason(uint256,uint8,string)"
+      | "castVoteWithReason(uint256,uint8,string,bytes,(bytes32,bytes32,uint8,uint8)[])"
+      | "castVoteWithReasonAndParams(uint256,uint8,string,bytes)"
+      | "castVoteWithReasonAndParams(uint256,uint8,string,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])"
+      | "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])"
+      | "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes)"
       | "changeHubAddress"
       | "clock"
       | "eip712Domain"
@@ -347,23 +352,72 @@ export interface BakelandDAOHubInterface extends Interface {
     values: [AddressLike[], BigNumberish[], BytesLike[], BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "castVote",
+    functionFragment: "castVote(uint256,uint8)",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "castVoteBySig",
+    functionFragment: "castVote(uint256,uint8,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    values: [BigNumberish, BigNumberish, BytesLike, IWormhole.SignatureStruct[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "castVoteBySig(uint256,uint8,address,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    values: [
+      BigNumberish,
+      BigNumberish,
+      AddressLike,
+      BytesLike,
+      BytesLike,
+      IWormhole.SignatureStruct[]
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "castVoteBySig(uint256,uint8,address,bytes)",
     values: [BigNumberish, BigNumberish, AddressLike, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "castVoteWithReason",
+    functionFragment: "castVoteWithReason(uint256,uint8,string)",
     values: [BigNumberish, BigNumberish, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "castVoteWithReasonAndParams",
+    functionFragment: "castVoteWithReason(uint256,uint8,string,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    values: [
+      BigNumberish,
+      BigNumberish,
+      string,
+      BytesLike,
+      IWormhole.SignatureStruct[]
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "castVoteWithReasonAndParams(uint256,uint8,string,bytes)",
     values: [BigNumberish, BigNumberish, string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "castVoteWithReasonAndParamsBySig",
+    functionFragment: "castVoteWithReasonAndParams(uint256,uint8,string,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    values: [
+      BigNumberish,
+      BigNumberish,
+      string,
+      BytesLike,
+      BytesLike,
+      IWormhole.SignatureStruct[]
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    values: [
+      BigNumberish,
+      BigNumberish,
+      AddressLike,
+      string,
+      BytesLike,
+      BytesLike,
+      BytesLike,
+      IWormhole.SignatureStruct[]
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes)",
     values: [
       BigNumberish,
       BigNumberish,
@@ -660,21 +714,44 @@ export interface BakelandDAOHubInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "_wormhole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "cancel", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "castVote", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "castVoteBySig",
+    functionFragment: "castVote(uint256,uint8)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "castVoteWithReason",
+    functionFragment: "castVote(uint256,uint8,bytes,(bytes32,bytes32,uint8,uint8)[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "castVoteWithReasonAndParams",
+    functionFragment: "castVoteBySig(uint256,uint8,address,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "castVoteWithReasonAndParamsBySig",
+    functionFragment: "castVoteBySig(uint256,uint8,address,bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "castVoteWithReason(uint256,uint8,string)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "castVoteWithReason(uint256,uint8,string,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "castVoteWithReasonAndParams(uint256,uint8,string,bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "castVoteWithReasonAndParams(uint256,uint8,string,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1232,13 +1309,37 @@ export interface BakelandDAOHub extends BaseContract {
     "nonpayable"
   >;
 
-  castVote: TypedContractMethod<
+  "castVote(uint256,uint8)": TypedContractMethod<
     [proposalId: BigNumberish, support: BigNumberish],
     [bigint],
     "nonpayable"
   >;
 
-  castVoteBySig: TypedContractMethod<
+  "castVote(uint256,uint8,bytes,(bytes32,bytes32,uint8,uint8)[])": TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+
+  "castVoteBySig(uint256,uint8,address,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])": TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      voter: AddressLike,
+      signature: BytesLike,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+
+  "castVoteBySig(uint256,uint8,address,bytes)": TypedContractMethod<
     [
       proposalId: BigNumberish,
       support: BigNumberish,
@@ -1249,13 +1350,25 @@ export interface BakelandDAOHub extends BaseContract {
     "nonpayable"
   >;
 
-  castVoteWithReason: TypedContractMethod<
+  "castVoteWithReason(uint256,uint8,string)": TypedContractMethod<
     [proposalId: BigNumberish, support: BigNumberish, reason: string],
     [bigint],
     "nonpayable"
   >;
 
-  castVoteWithReasonAndParams: TypedContractMethod<
+  "castVoteWithReason(uint256,uint8,string,bytes,(bytes32,bytes32,uint8,uint8)[])": TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      reason: string,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+
+  "castVoteWithReasonAndParams(uint256,uint8,string,bytes)": TypedContractMethod<
     [
       proposalId: BigNumberish,
       support: BigNumberish,
@@ -1266,7 +1379,35 @@ export interface BakelandDAOHub extends BaseContract {
     "nonpayable"
   >;
 
-  castVoteWithReasonAndParamsBySig: TypedContractMethod<
+  "castVoteWithReasonAndParams(uint256,uint8,string,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])": TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      reason: string,
+      params: BytesLike,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+
+  "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])": TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      voter: AddressLike,
+      reason: string,
+      params: BytesLike,
+      signature: BytesLike,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+
+  "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes)": TypedContractMethod<
     [
       proposalId: BigNumberish,
       support: BigNumberish,
@@ -1706,14 +1847,40 @@ export interface BakelandDAOHub extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "castVote"
+    nameOrSignature: "castVote(uint256,uint8)"
   ): TypedContractMethod<
     [proposalId: BigNumberish, support: BigNumberish],
     [bigint],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "castVoteBySig"
+    nameOrSignature: "castVote(uint256,uint8,bytes,(bytes32,bytes32,uint8,uint8)[])"
+  ): TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "castVoteBySig(uint256,uint8,address,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])"
+  ): TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      voter: AddressLike,
+      signature: BytesLike,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "castVoteBySig(uint256,uint8,address,bytes)"
   ): TypedContractMethod<
     [
       proposalId: BigNumberish,
@@ -1725,14 +1892,27 @@ export interface BakelandDAOHub extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "castVoteWithReason"
+    nameOrSignature: "castVoteWithReason(uint256,uint8,string)"
   ): TypedContractMethod<
     [proposalId: BigNumberish, support: BigNumberish, reason: string],
     [bigint],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "castVoteWithReasonAndParams"
+    nameOrSignature: "castVoteWithReason(uint256,uint8,string,bytes,(bytes32,bytes32,uint8,uint8)[])"
+  ): TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      reason: string,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "castVoteWithReasonAndParams(uint256,uint8,string,bytes)"
   ): TypedContractMethod<
     [
       proposalId: BigNumberish,
@@ -1744,7 +1924,37 @@ export interface BakelandDAOHub extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "castVoteWithReasonAndParamsBySig"
+    nameOrSignature: "castVoteWithReasonAndParams(uint256,uint8,string,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])"
+  ): TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      reason: string,
+      params: BytesLike,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes,bytes,(bytes32,bytes32,uint8,uint8)[])"
+  ): TypedContractMethod<
+    [
+      proposalId: BigNumberish,
+      support: BigNumberish,
+      voter: AddressLike,
+      reason: string,
+      params: BytesLike,
+      signature: BytesLike,
+      response: BytesLike,
+      signatures: IWormhole.SignatureStruct[]
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "castVoteWithReasonAndParamsBySig(uint256,uint8,address,string,bytes,bytes)"
   ): TypedContractMethod<
     [
       proposalId: BigNumberish,
