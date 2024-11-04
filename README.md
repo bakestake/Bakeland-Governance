@@ -17,10 +17,16 @@
     |    └── token
     |    |      └── VeBuds.sol
     |    - Timelock.sol   
-    ├── scripts                   # scripts for deploying contracts
     ├── tasks                     # tasks for invoking functions
+    |      └── config              # on-chain config tasks
+    |      └── deploy              # deploy contract tasks
+    |      └── other tasks
+    |      └── index.ts            # exports all hardhat tasks to environment
+    |      
     ├── wormholeCcq               # service responsible for cross-chain query 
     |   └── handlers              # contains all handlers performing **CCQ** for specfic purpose
+    |       └── voteValidation.js
+    |       └── fetchVoteFromSpokes.js
     |   └── handler.js            
     |   └── index.js              # file configuring express app
     |   └── server.js             # entrypoint for running server
