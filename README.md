@@ -8,6 +8,23 @@
 
 ## Problem statement
 
+95% of our crypto-native userbase has a preferred network to store assets and transact on. This reveals the larger issue of tribalism which is characteristic of our space - which has led to fragmented communities in silos of walled-off ecosystems.
+
+This is in contrast to the increasing number of protocols which decide to deploy across multiple networks to tap into the liquidity and userbase across all of them - unlocking increased distribution for their product. Undoubtedly, this is the future of dApps - for it makes little sense to intentionally cap your distribution on a single chain with solutions such as Wormhole CCQ and composable intents available for builders.
+
+However, such protocols face a serious problem on the GTM side due to this paradoxical situation. Having a community spread out across different silos often leads to reduced cohesiveness, and hinders the team/foundation's ability to communicate effectively to a misaligned audience.
+
+A solution such as Multi-Gov is the step in the right direction to unify these walled-off communities and allow a whole new form of governance which is based on neutrality - allowing communities from each network to participate in governance - collectively deciding on positive-sum outcomes for all networks involved. This not only forms a better structure for multi-chain communities, but promotes dialogue on increasing value creation/optimization across multiple ecosystems. Something we require urgently in the space to move ahead.
+
+Bakeland is among the first natively multi-chain economies powered by real-time composability - which Wormhole CCQ enables. This makes it among the most suitable to showcase the unique benefits of multi-chain governance.
+
+For context, Bakeland has pools of $BUDS across multiple spoke networks, with Berachain acting as the hub of liquidity. Each network receives proportional emissions of $BUDS depending on the saturation factor of the pool. For more info regarding the saturation factor, kindly refer to [this](https://github.com/bakestake/bakeland-contracts-wormhole) submission.
+
+When a user stakes $BUDS on any chain, an NTT LST $stBUDS is minted on Berachain. Additional value is created by restaking $stBUDS in rewards vaults on Berachain, which gives our BGT emissions and $veBUDS to depositors. This streamlines access to the benefits of Proof-of-Liquidity by unifying the interface level - which we further intend to improve with composable intents.
+And more importantly for this topic, it makes Multi-Gov a crucial element for our users - where users from any of our supported networks can participate in Bakeland DAO to vote on how $BUDS emissions will be directed to pools and what the incentive rate offered to validators on Berachain will be.This will also democratize the additional and removal of pools, as the team is working on a solution to keep pool deployments 'modular' to allow for strategic decisions by the DAO as pools on certain chains lose traction/relevance.
+
+eg. Pool X becomes stagnant and the DAO can vote to remove said pool and deploy it to new chain with active liquidity and users. For instance an upcoming chain like Monad. This ensures Bakeland can adapt to major changes without being exposed to additional risk with multiple redundancies.
+
 ## Project structure
     ├── contracts                 
     |    └── hub
@@ -50,6 +67,8 @@ Bakeland Multi-DAO utilizes Wormhole technology to enable decentralized, cross-c
 ### We have utilized following wormhole features
   1. Wormhole queries
   2. Wormhole CCM
+  3. NTT for veBuds token
+     
 ---
 
 ### Architecture
@@ -290,4 +309,75 @@ Bakeland Multi-DAO utilizes Wormhole technology to enable decentralized, cross-c
 
     }
    ```
+
+## Steps to deploy
+
+1. Deploy veBuds
+  ```
+    npx hardhat deploy-vebuds --network $NETWORK_NAME --chain $NETWORK_NAME
+  ```
+
+2. Deploy timelock
+   ```
+    npx hardhat deploy-timelock --network $NETWORK_NAME --chain $NETWORK_NAME --mindelay $MINIMUM_EXECUTION_DELAY --admin $ADMIN_ADDRESS
+   ```
    
+3. Deploy Hub DAO contract
+   ```
+    npx hardhat deploy-hub-dao \
+    --chain $NETWORK_NAME
+    --network $NETWORK_NAME
+    --token $VEBUDS_TOKEN_ADDRESS
+    --timelock $TIMELOCK_ADDRESS
+    --relayer $WORMHOLE_RELAYER_ADDRESS_FOR_CUR_CHAIN
+    --chaindids $ARRAY_OF_SPOKE_CHAIN_IDS_IN_WORMHOLE_FORMAT [optional]
+   ```
+   
+4. Deploy Spoke DAO contract
+   ```
+    npx hardhat deploy-spoke-dao \
+    --network $NETWORK_NAME
+    --chain $NETWORK_NAME
+    --token $VEBUDS_TOKEN_ADDRESS
+    --timelock $TIMELOCK_ADDRESS
+    --relayer $WORMHOLE_RELAYER_ADDRESS_FOR_CUR_CHAIN
+    --hub $HUB_CONTRACT_ADDRESS_FROM_HUB_CHAIM
+    --chainid $CHAINID_OF_CUR_CHAIN_IN_WORHMHOLE_FORMAT
+    --hubchainid $CHAINID_OF_HUB_CHAIN_IN_WORHMHOLE_FORMAT
+    --chains $NUMBER_OF_CHAINS_WHERE_DAO_IS_LIVE
+   ```
+   
+5. Creating proposal
+  ```
+  npx hardhat create-proposal \
+  --contract <BakelandDAOHub contract address> \
+  --targets '["<target_address1>", "<target_address2>"]' \
+  --values '[0, 0]' \
+  --calldatas '["0x", "0x"]' \
+  --description "My new governance proposal"
+
+  ```
+
+6. Voting on proposal
+  ```
+  npx hardhat cast-vote \
+    --contract <BakelandDAOHub contract address> \
+    --proposalid <proposal_id> \
+    --support <0/1/2> \
+    --response "<response_data>" \
+    --signatures '[<signature1>, <signature2>]'
+
+  ```
+
+7. Executing
+   ```
+   npx hardhat execute-proposal \
+    --contract <BakelandDAOHub contract address> \
+    --targets '["<target_address1>", "<target_address2>"]' \
+    --values '[0, 0]' \
+    --calldatas '["0x", "0x"]' \
+    --descriptionhash "<description_hash>" \
+    --response "<response_data>" \
+    --signatures '[<signature1>, <signature2>]'
+
+   ``` 
