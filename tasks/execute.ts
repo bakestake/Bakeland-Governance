@@ -2,7 +2,7 @@ import { task } from 'hardhat/config'
 import { BakelandDAOHub__factory } from '../types';
 
 // tasks/execute-proposal.js
-task("executeProposal", "Executes a proposal in BakelandDAOHub")
+task("execute-proposal", "Executes a proposal in BakelandDAOHub")
   .addParam("contract", "The address of the BakelandDAOHub contract")
   .addParam("targets", "The targets (array of addresses) for the proposal")
   .addParam("values", "The values (array of numbers) for the proposal")

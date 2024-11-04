@@ -2,7 +2,7 @@ import { task } from 'hardhat/config'
 import { BakelandDAOHub__factory } from '../../types';
 
 // tasks/cast-vote.js
-task("castVote", "Casts a vote on a proposal in BakelandDAOHub")
+task("add-spoke", "Casts a vote on a proposal in BakelandDAOHub")
   .addParam("contract", "The address of the BakelandDAOHub contract")
   .addParam("chaindids", "Array of chain ids")
   .addParam("addresses", "Array of peer addresses")

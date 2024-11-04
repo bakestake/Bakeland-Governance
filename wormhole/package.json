@@ -1,0 +1,24 @@
+{
+  "name": "wormhole",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@wormhole-foundation/wormhole-query-sdk": "^0.0.12",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.1",
+    "express": "^4.19.2",
+    "@babel/core": "^7.22.15",
+    "aws-serverless-express": "^3.4.0",
+    "axios": "^1.5.0",
+    "nodemon": "^3.0.1",
+    "serverless-http": "^3.2.0"
+  }
+}

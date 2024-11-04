@@ -104,10 +104,12 @@ export type { Checkpoints } from "./@openzeppelin/contracts/utils/structs/Checkp
 export { Checkpoints__factory } from "./factories/@openzeppelin/contracts/utils/structs/Checkpoints__factory";
 export type { BakelandDAOHub } from "./contracts/hub/BakelandDAOHub";
 export { BakelandDAOHub__factory } from "./factories/contracts/hub/BakelandDAOHub__factory";
+export type { BakelandDAOSpoke } from "./contracts/spoke/BakelandDAOSpoke";
+export { BakelandDAOSpoke__factory } from "./factories/contracts/spoke/BakelandDAOSpoke__factory";
 export type { Timelock } from "./contracts/Timelock";
 export { Timelock__factory } from "./factories/contracts/Timelock__factory";
-export type { VeBuds } from "./contracts/token/VeBuds.sol/VeBuds";
-export { VeBuds__factory } from "./factories/contracts/token/VeBuds.sol/VeBuds__factory";
+export type { VeBuds } from "./contracts/token/VeBuds";
+export { VeBuds__factory } from "./factories/contracts/token/VeBuds__factory";
 export type { QueryResponse } from "./contracts/wormholeQuery/QueryResponse";
 export { QueryResponse__factory } from "./factories/contracts/wormholeQuery/QueryResponse__factory";
 export type { IWormhole } from "./wormhole-solidity-sdk/interfaces/IWormhole";

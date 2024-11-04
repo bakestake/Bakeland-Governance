@@ -1,0 +1,39 @@
+service: wormholeApi
+
+frameworkVersion: "3"
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  timeout: 30
+  region: eu-west-3
+
+functions:
+  wormhole:
+    handler: handler.wormhole
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http: ANY /{proxy+}
+    environment:
+      POSTGRES_HOST: ${env:POSTGRES_HOST}
+      POSTGRES_PORT: ${env:POSTGRES_PORT}
+      POSTGRES_USER: ${env:POSTGRES_USER}
+      POSTGRES_PASSWORD: ${env:POSTGRES_PASSWORD}
+      POSTGRES_DB: ${env:POSTGRES_DB}
+      RPC_URL_MAINNET: ${env:RPC_URL_MAINNET}
+      RPC_URL_FUJI: ${env:RPC_URL_FUJI}
+      RPC_URL_AMOY: ${env:RPC_URL_AMOY}
+      RPC_URL_ARBSEPOLIA: ${env:RPC_URL_ARBSEPOLIA}
+      RPC_URL_BSCTESTNET: ${env:RPC_URL_BSCTESTNET}
+      RPC_URL_BERATESTET2: ${env:RPC_URL_BERATESTET2}
+      RPC_URL_BERATESTNET: ${env:RPC_URL_BERATESTNET}
+      RPC_URL_BASESEPOLIA: ${env:RPC_URL_BASESEPOLIA}
+      RPC_URL_CORE_TESTNET: ${env:RPC_URL_CORE_TESTNET}
+      API_KEY: ${env:API_KEY}
+      WORMHOLE_API_KEY: ${env:WORMHOLE_API_KEY}
+      STATE_PRIVATE_KEY: ${env:STATE_PRIVATE_KEY}
+      PRIVATE_KEY: ${env:PRIVATE_KEY}

@@ -16,7 +16,7 @@ import "wormhole-solidity-sdk/interfaces/IWormhole.sol";
 import {QueryResponse} from "../wormholeQuery/QueryResponse.sol";
 
 
-contract BakelandDAOHub is 
+contract BakelandDAOSpoke is 
     Initializable, 
     GovernorUpgradeable, 
     GovernorSettingsUpgradeable, 

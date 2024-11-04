@@ -6,6 +6,7 @@ task('deploy-hub-dao', 'Deploys DAO Smart contract')
     .addPositionalParam('token')
     .addPositionalParam('timelock')
     .addPositionalParam('relayer')
+    .addOptionalPositionalParam('chainids')
     .setAction(async (taskArgs, hre) => {
         await hre.run('compile')
 
@@ -16,9 +17,11 @@ task('deploy-hub-dao', 'Deploys DAO Smart contract')
         const { abi, bytecode } = await hre.artifacts.readArtifact("BakelandDAO")
         const factory = new hre.ethers.ContractFactory(abi, bytecode, signer)
 
+        const chainIds = taskArgs.chainids == null || undefined ? [] : taskArgs.chainids;
+
         const contract = await hre.upgrades.deployProxy(
             factory,
-            [taskArgs.token, taskArgs.timelock, taskArgs.relayer,[]], //insert array of wormhole chain Ids for spoke chains
+            [taskArgs.token, taskArgs.timelock, taskArgs.relayer, chainIds], //insert array of wormhole chain Ids for spoke chains
             {
                 initializer: 'initialize',
                 pollingInterval: taskArgs.chain == "beraTestnet" ? 10 : 500,
