@@ -1,4 +1,4 @@
-# Wormhole Hackathon Submission
+# Wormhole Sigma Submission
   ![image](https://github.com/user-attachments/assets/f2dbc9b0-d6c4-4644-ad0e-87036b5c42d4)
 
 # Bakeland Multi-GOV
