@@ -11,20 +11,20 @@
 ## Project structure
     ├── contracts                 
     |    └── hub
-    |    |      └── BakelandDAOHub.sol
+    |    |      └── BakelandDAOHub.sol      #Hub DAO contract
     |    └── spoke
-    |    |      └── BakelandDAOSpoke.sol
+    |    |      └── BakelandDAOSpoke.sol    #Spoke DAO contract
     |    └── token
-    |    |      └── VeBuds.sol
-    |    - Timelock.sol   
+    |    |      └── VeBuds.sol              #Gov token contract
+    |    - Timelock.sol                     #Timelock contract
     ├── tasks                     # tasks for invoking functions
     |      └── config              # on-chain config tasks
     |      └── deploy              # deploy contract tasks
     |      └── other tasks
     |      └── index.ts            # exports all hardhat tasks to environment
     |      
-    ├── wormholeCcq               # service responsible for cross-chain query 
-    |   └── handlers              # contains all handlers performing **CCQ** for specfic purpose
+    ├── wormhole                  # service responsible for cross-chain query 
+    |   └── handlers              # contains all handlers performing **CCQ** for specific purpose
     |       └── voteValidation.js
     |       └── fetchVoteFromSpokes.js
     |   └── handler.js            
@@ -47,6 +47,9 @@
 
 Bakeland Multi-DAO utilizes Wormhole technology to enable decentralized, cross-chain governance. This system ensures that users holding assets on multiple chains can participate effectively while preventing double voting.
 
+### We have utilized following wormhole features
+  1. Wormhole queries
+  2. Wormhole CCM
 ---
 
 ### Architecture
